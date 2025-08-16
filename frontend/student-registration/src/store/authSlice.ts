@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
 
 interface AuthState {
   access: string | null;
@@ -11,39 +10,40 @@ interface AuthState {
   error: string | null;
 }
 
+// Initialize state from localStorage if available
 const initialState: AuthState = {
-  access: null,
-  refresh: null,
-  role: null,
-  user_id: null,
+  access: localStorage.getItem("access"),
+  refresh: localStorage.getItem("refresh"),
+  role: localStorage.getItem("role"),
+  user_id: localStorage.getItem("user_id"),
   loading: false,
   error: null,
 };
 
 // Async thunk for login
 export const loginUser = createAsyncThunk(
-    "auth/loginUser",
-    async (credentials: { username: string; password: string }, thunkAPI) => {
-      try {
-        const response = await axios.post("http://127.0.0.1:8000/api/login/", credentials, {
-          headers: { "Content-Type": "application/json" },
-        });
-  
-        const { access, refresh, role, id: user_id } = response.data.user;
-  
-        return {
-          access,
-          refresh,
-          role,
-          user_id: user_id.toString(),
-        };
-      } catch (err: any) {
-        console.error("Backend error response:", err.response?.data);
-        return thunkAPI.rejectWithValue(err.response?.data || "Login failed");
-      }
+  "auth/loginUser",
+  async (credentials: { username: string; password: string }, thunkAPI) => {
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/api/login/", credentials, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const { access, refresh, role, id: user_id } = response.data.user;
+
+      // Save to localStorage
+      localStorage.setItem("access", access);
+      localStorage.setItem("refresh", refresh);
+      localStorage.setItem("role", role);
+      localStorage.setItem("user_id", user_id.toString());
+
+      return { access, refresh, role, user_id: user_id.toString() };
+    } catch (err: any) {
+      console.error("Backend error response:", err.response?.data);
+      return thunkAPI.rejectWithValue(err.response?.data || "Login failed");
     }
-  );
-  
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",
@@ -55,6 +55,11 @@ const authSlice = createSlice({
       state.role = null;
       state.user_id = null;
       state.error = null;
+      // Remove from localStorage
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+      localStorage.removeItem("role");
+      localStorage.removeItem("user_id");
     },
   },
   extraReducers: (builder) => {
