@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { AppDispatch, RootState } from "../store";
 import { fetchStudents, selectStudents, selectStudentsLoading, selectStudentsError } from "../store/studentSlice";
@@ -13,12 +13,22 @@ const Students: React.FC = () => {
     dispatch(fetchStudents());
   }, [dispatch]);
 
+  // Calculate average grade
+  const averageGrade = useMemo(() => {
+    if (students.length === 0) return 0;
+    // Explicitly convert student.grade_level to a number
+    const total = students.reduce((sum, student) => sum + Number(student.grade_level), 0);
+    return (total / students.length).toFixed(2); // rounded to 2 decimal places
+  }, [students]);
+
   return (
     <div style={{ paddingTop: "4rem" }}>
       <h1>Students</h1>
 
       {loading && <p>Loading students...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
+
+      <h2>Average Grade: {averageGrade}</h2>
 
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
