@@ -39,17 +39,46 @@ class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     role = serializers.ChoiceField(choices=User.ROLE_CHOICES)
 
+    # Extra fields for Student
+    date_of_birth = serializers.DateField(required=False, allow_null=True)
+    enrollment_number = serializers.CharField(required=False, allow_blank=True)
+    address = serializers.CharField(required=False, allow_blank=True)
+    phone_number = serializers.CharField(required=False, allow_blank=True)
+    grade_level = serializers.CharField(required=False, allow_blank=True)
+
+    # Extra fields for Teacher
+    employee_id = serializers.CharField(required=False, allow_blank=True)
+    specialization = serializers.CharField(required=False, allow_blank=True)
+    years_of_experience = serializers.IntegerField(required=False, default=0)
+    office_address = serializers.CharField(required=False, allow_blank=True)
+
     class Meta:
         model = User
-        fields = ("username", "email", "password", "role")
+        fields = (
+            "username", "email", "password", "role",
+            "date_of_birth", "enrollment_number", "address", "phone_number", "grade_level",
+            "employee_id", "specialization", "years_of_experience", "office_address"
+        )
 
     def create(self, validated_data):
+        # Extract profile fields before creating the user
+        student_fields = {k: validated_data.pop(k, None) for k in ["date_of_birth", "enrollment_number", "address", "phone_number", "grade_level"]}
+        teacher_fields = {k: validated_data.pop(k, None) for k in ["employee_id", "specialization", "years_of_experience", "office_address"]}
+
+        # Create the user
         user = User.objects.create_user(
             username=validated_data["username"],
             email=validated_data["email"],
             password=validated_data["password"],
             role=validated_data["role"]
         )
+
+        # Create corresponding profile based on role
+        if user.role == "student":
+            Student.objects.create(user=user, **student_fields)
+        elif user.role == "teacher":
+            Teacher.objects.create(user=user, **teacher_fields)
+
         return user
 
 
