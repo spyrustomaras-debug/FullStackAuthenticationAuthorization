@@ -1,26 +1,32 @@
 // src/App.tsx
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register"; // make sure you have this page
-import TeacherDashboard from "./pages/TeacherDashboard";
-import Navbar from "./components/Navbar"; // import your Navbar
-import Students from "./pages/Students";
-import Grades from "./pages/Grades";
+import Navbar from "./components/Navbar"; // Navbar should stay eager (always used)
+
+// Lazy-loaded pages
+const Home = lazy(() => import("./pages/Home"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const TeacherDashboard = lazy(() => import("./pages/TeacherDashboard"));
+const Students = lazy(() => import("./pages/Students"));
+const Grades = lazy(() => import("./pages/Grades"));
 
 function App() {
   return (
     <Router>
       <Navbar /> {/* Navbar will appear on all pages */}
-      <div style={{ paddingTop: "3.5rem" }}> {/* add padding to prevent overlap with fixed Navbar */}
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/students" element={<Students/>}/>
-          <Route path="/register" element={<Register />} />
-          <Route path="/grades" element={<Grades/>}/>
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<TeacherDashboard />} />
-        </Routes>
+      <div style={{ paddingTop: "3.5rem" }}>
+        {/* Wrap routes in Suspense for lazy loading */}
+        <Suspense fallback={<div style={{ textAlign: "center", padding: "2rem" }}>⏳ Loading...</div>}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/students" element={<Students />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/grades" element={<Grades />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<TeacherDashboard />} />
+          </Routes>
+        </Suspense>
       </div>
     </Router>
   );
