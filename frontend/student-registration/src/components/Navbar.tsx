@@ -38,14 +38,22 @@ const Navbar: React.FC = () => {
       </div>
 
       <div>
-        {/* Only show Home if user is a teacher */}
+        {/* Only show Home and Students if user is a teacher */}
         {userRole === "teacher" && (
-          <Link
-            to="/"
-            style={{ color: "#fff", textDecoration: "none", marginRight: "1rem" }}
-          >
-            Home
-          </Link>
+          <>
+            <Link
+              to="/"
+              style={{ color: "#fff", textDecoration: "none", marginRight: "1rem" }}
+            >
+              Home
+            </Link>
+            <Link
+              to="/students"
+              style={{ color: "#fff", textDecoration: "none", marginRight: "1rem" }}
+            >
+              Students
+            </Link>
+          </>
         )}
 
         {/* Show Register/Login only if not logged in */}

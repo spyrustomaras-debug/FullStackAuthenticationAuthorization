@@ -2,6 +2,8 @@ import { configureStore } from "@reduxjs/toolkit";
 import registerReducer from "./registerSlice";
 import authReducer from "./authSlice";
 import coursesReducer from "./courseSlice";
+import studentsReducer from "./studentSlice";
+
 
 
 export const store = configureStore({
@@ -9,6 +11,7 @@ export const store = configureStore({
     register: registerReducer,
     auth: authReducer,
     courses: coursesReducer,
+    students: studentsReducer,
   },
 });
 

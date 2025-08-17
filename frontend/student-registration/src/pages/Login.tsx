@@ -10,16 +10,21 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const result = await dispatch(loginUser({ username, password })).unwrap();
-      console.log("Logged in user:", result);
-      alert(`Welcome ${result.role} (User ID: ${result.user_id})`);
-    } catch (err) {
-      console.error("Login failed:", err);
-      alert("Login failed. Check console for details.");
-    }
-  };
+  e.preventDefault();
+  try {
+    const result = await dispatch(loginUser({ username, password })).unwrap();
+    console.log("Logged in user:", result);
+    alert(`Welcome ${result.role} (User ID: ${result.user_id})`);
+
+    // Clear input fields after successful login
+    setUsername("");
+    setPassword("");
+  } catch (err) {
+    console.error("Login failed:", err);
+    alert("Login failed. Check console for details.");
+  }
+};
+
 
   return (
     <div>

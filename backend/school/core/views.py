@@ -57,6 +57,23 @@ class StudentListView(generics.ListAPIView):
             return [user.student_profile]
         return Student.objects.none()
 
+class StudentCreateView(generics.CreateAPIView):
+    serializer_class = StudentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # Only teachers can create students
+        if self.request.user.role != "teacher":
+            raise PermissionDenied("Only teachers can create students")
+
+        # Create a User for the student
+        username = self.request.data.get("username")
+        password = self.request.data.get("password")
+        user = User.objects.create_user(username=username, password=password)
+
+        # Save the Student linked to the new User
+        serializer.save(user=user)
+
 
 class LoginView(APIView):
     def post(self, request):
