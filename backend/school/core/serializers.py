@@ -24,12 +24,15 @@ class CourseSerializer(serializers.ModelSerializer):
     students = StudentSerializer(many=True, read_only=True)
     teacher = TeacherSerializer(read_only=True)
 
+    student_ids = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Student.objects.all(), write_only=True, source="students"
+    )
+
     class Meta:
         model = Course
         fields = "__all__"
 
-
-
+    
 
 # Base user registration serializer
 class RegisterSerializer(serializers.ModelSerializer):

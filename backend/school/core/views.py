@@ -2,6 +2,13 @@ from rest_framework import generics, permissions
 from django.contrib.auth import get_user_model
 from .serializers import RegisterSerializer, CourseSerializer, StudentSerializer
 from .models import Course, Student
+from django.contrib.auth import authenticate
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import viewsets, permissions
+from .models import Teacher
 
 User = get_user_model()
 
@@ -13,17 +20,28 @@ class RegisterView(generics.CreateAPIView):
 
 
 # Courses
-class CourseListView(generics.ListAPIView):
+class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
         if user.role == "teacher":
-            return Course.objects.filter(teacher=user.teacher_profile)
+            # Ensure teacher_profile exists
+            teacher_profile, created = Teacher.objects.get_or_create(user=user)
+            print(teacher_profile)
+            return Course.objects.filter(teacher=teacher_profile)
         elif user.role == "student":
             return user.student_profile.courses.all()
         return Course.objects.none()
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        if user.role == "teacher":
+            teacher_profile, created = Teacher.objects.get_or_create(user=user)
+            serializer.save(teacher=teacher_profile)
+        else:
+            raise PermissionDenied("Only teachers can create courses.")
 
 
 # Students
@@ -39,11 +57,6 @@ class StudentListView(generics.ListAPIView):
             return [user.student_profile]
         return Student.objects.none()
 
-from django.contrib.auth import authenticate
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
 
 class LoginView(APIView):
     def post(self, request):
