@@ -2,6 +2,8 @@
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar"; // Navbar should stay eager (always used)
+import Loader from "./components/Loader"; // 🔥 import new loader
+
 
 // Lazy-loaded pages
 const Home = lazy(() => import("./pages/Home"));
@@ -17,7 +19,7 @@ function App() {
       <Navbar /> {/* Navbar will appear on all pages */}
       <div style={{ paddingTop: "3.5rem" }}>
         {/* Wrap routes in Suspense for lazy loading */}
-        <Suspense fallback={<div style={{ textAlign: "center", padding: "2rem" }}>⏳ Loading...</div>}>
+        <Suspense fallback={<Loader />}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/students" element={<Students />} />
