@@ -56,6 +56,16 @@ const Navbar: React.FC = () => {
           </>
         )}
 
+        {/* Show Grades if user is teacher or student */}
+        {(userRole === "teacher" || userRole === "student") && (
+          <Link
+            to="/grades"
+            style={{ color: "#fff", textDecoration: "none", marginRight: "1rem" }}
+          >
+            Grades
+          </Link>
+        )}
+
         {/* Show Register/Login only if not logged in */}
         {!isLoggedIn && (
           <>

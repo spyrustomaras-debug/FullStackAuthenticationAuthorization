@@ -6,6 +6,7 @@ import Register from "./pages/Register"; // make sure you have this page
 import TeacherDashboard from "./pages/TeacherDashboard";
 import Navbar from "./components/Navbar"; // import your Navbar
 import Students from "./pages/Students";
+import Grades from "./pages/Grades";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/students" element={<Students/>}/>
           <Route path="/register" element={<Register />} />
+          <Route path="/grades" element={<Grades/>}/>
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<TeacherDashboard />} />
         </Routes>

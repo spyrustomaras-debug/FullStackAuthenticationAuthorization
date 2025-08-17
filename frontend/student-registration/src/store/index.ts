@@ -3,7 +3,7 @@ import registerReducer from "./registerSlice";
 import authReducer from "./authSlice";
 import coursesReducer from "./courseSlice";
 import studentsReducer from "./studentSlice";
-
+import gradesReducer from "./gradesSlice"
 
 
 export const store = configureStore({
@@ -12,6 +12,7 @@ export const store = configureStore({
     auth: authReducer,
     courses: coursesReducer,
     students: studentsReducer,
+    grades: gradesReducer,
   },
 });
 
