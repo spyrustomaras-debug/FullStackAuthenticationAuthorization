@@ -44,3 +44,36 @@ class Course(models.Model):
 
     def __str__(self):
         return self.name
+    
+    
+class Grade(models.Model):
+    student = models.ForeignKey(
+        'Student', 
+        on_delete=models.CASCADE, 
+        related_name="grades"
+    )
+    course = models.ForeignKey(
+        'Course', 
+        on_delete=models.CASCADE, 
+        related_name="grades"
+    )
+    score = models.DecimalField(
+        max_digits=5, 
+        decimal_places=2, 
+        null=True, 
+        blank=True
+    )
+    assessment_type = models.CharField(
+        max_length=50, 
+        help_text="e.g., 'Quiz', 'Midterm', 'Final Exam'"
+    )
+    date_given = models.DateField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return f"{self.student.user.username}'s grade for {self.course.name}"
+
+    class Meta:
+        # Ensures a student can't have duplicate grades for the same assessment in a course
+        unique_together = ('student', 'course', 'assessment_type')

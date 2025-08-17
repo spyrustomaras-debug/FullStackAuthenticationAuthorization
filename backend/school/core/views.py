@@ -9,8 +9,28 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import viewsets, permissions
 from .models import Teacher
+from .models import Grade
+from .serializers import GradeSerializer
+from .permissions import IsTeacher
+from rest_framework.permissions import IsAuthenticated, SAFE_METHODS, BasePermission
+
 
 User = get_user_model()
+
+class GradeListCreateView(generics.ListCreateAPIView):
+    """
+    API endpoint that allows teachers to create grades and anyone authenticated to view them.
+    """
+    queryset = Grade.objects.all()
+    serializer_class = GradeSerializer
+
+    def get_permissions(self):
+        if self.request.method in SAFE_METHODS:  # GET, HEAD, OPTIONS
+            # Any authenticated user can view
+            return [IsAuthenticated()]
+        else:
+            # Only teachers can create
+            return [IsTeacher()]
 
 # Registration
 class RegisterView(generics.CreateAPIView):

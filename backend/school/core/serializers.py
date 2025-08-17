@@ -1,8 +1,13 @@
 from rest_framework import serializers
-from .models import Student, Teacher, Course
+from .models import Student, Teacher, Course, Grade
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
+
+class GradeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Grade
+        fields = '__all__'
 
 class StudentSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
