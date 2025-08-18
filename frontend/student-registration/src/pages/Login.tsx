@@ -27,17 +27,19 @@ const Login = () => {
   const auth = useSelector((state: RootState) => state.auth);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+
 
   const handleLogin = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const result = await dispatch(loginUser({ username, password })).unwrap();
-      alert(`Welcome ${result.role} (User ID: ${result.user_id})`);
+       // Clear input fields
       setUsername("");
       setPassword("");
+      setMessage(`Welcome ${result.role} (User ID: ${result.user_id})`);
     } catch (err) {
-      console.error("Login failed:", err);
-      alert("Login failed. Check console for details.");
+      setMessage("Login failed. Check console for details.");
     }
   }, [username, password, dispatch]);
 
@@ -62,6 +64,8 @@ const Login = () => {
           {auth.loading ? "Logging in..." : "Login"}
         </button>
       </form>
+      {message && <p className="message">{message}</p>}
+
 
       {auth.error && <p style={{ color: "red" }}>{auth.error}</p>}
 
