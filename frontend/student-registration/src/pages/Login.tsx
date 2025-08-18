@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../store/authSlice";
 import type { AppDispatch, RootState } from "../store/index";
@@ -28,21 +28,19 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-    const result = await dispatch(loginUser({ username, password })).unwrap();
-    console.log("Logged in user:", result);
-    alert(`Welcome ${result.role} (User ID: ${result.user_id})`);
+  const handleLogin = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const result = await dispatch(loginUser({ username, password })).unwrap();
+      alert(`Welcome ${result.role} (User ID: ${result.user_id})`);
+      setUsername("");
+      setPassword("");
+    } catch (err) {
+      console.error("Login failed:", err);
+      alert("Login failed. Check console for details.");
+    }
+  }, [username, password, dispatch]);
 
-    // Clear input fields after successful login
-    setUsername("");
-    setPassword("");
-  } catch (err) {
-    console.error("Login failed:", err);
-    alert("Login failed. Check console for details.");
-  }
-};
 
 
   return (
