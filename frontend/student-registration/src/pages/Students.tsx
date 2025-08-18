@@ -2,6 +2,8 @@ import React, { useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { AppDispatch, RootState } from "../store";
 import { fetchStudents, selectStudents, selectStudentsLoading, selectStudentsError } from "../store/studentSlice";
+import "./Student.scss"; // 👈 import SCSS
+
 
 const Students: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

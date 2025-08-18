@@ -3,6 +3,25 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../store/authSlice";
 import type { AppDispatch, RootState } from "../store/index";
 
+// ---------------- Input Component ----------------
+interface InputProps {
+  type?: string;
+  placeholder: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+const Input: React.FC<InputProps> = ({ type = "text", placeholder, value, onChange }) => (
+  <input
+    type={type}
+    placeholder={placeholder}
+    value={value}
+    onChange={onChange}
+    className="login-input"
+  />
+);
+
+
 const Login = () => {
   const dispatch = useDispatch<AppDispatch>(); // ✅ Type here
   const auth = useSelector((state: RootState) => state.auth);
@@ -30,13 +49,12 @@ const Login = () => {
     <div>
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
-        <input
-          type="text"
+        <Input
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <input
+        <Input
           type="password"
           placeholder="Password"
           value={password}

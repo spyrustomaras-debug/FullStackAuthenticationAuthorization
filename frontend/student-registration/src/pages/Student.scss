@@ -1,0 +1,68 @@
+$primary-color: #4caf50;
+$secondary-color: #f9f9f9;
+$table-header-bg: #e0e0e0;
+$table-border-color: #ccc;
+
+.students-container {
+  padding-top: 4rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+  h1 {
+    color: $primary-color;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    margin-bottom: 1.5rem;
+    color: #333;
+  }
+
+  p {
+    font-size: 1rem;
+    color: #555;
+  }
+
+  .students-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+
+    th,
+    td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: $table-header-bg;
+      color: #333;
+      font-weight: bold;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid $table-border-color;
+      transition: background 0.3s ease;
+
+      &:hover {
+        background-color: $secondary-color;
+      }
+    }
+
+    td {
+      color: #555;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .students-table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+  }
+}
