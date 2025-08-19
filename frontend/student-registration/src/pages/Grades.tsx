@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchGrades, addGrade, selectGrades, type Grade } from "../store/gradesSlice";
 import type { AppDispatch, RootState } from "../store";
 import { useNavigate } from "react-router-dom";
+import GradeForm from "./GradeForm";
+
 
 const GradesPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -35,22 +37,33 @@ const GradesPage: React.FC = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.student || !formData.course || !formData.assessment_type || formData.score === undefined) {
+    if (
+      !formData.student ||
+      !formData.course ||
+      !formData.assessment_type ||
+      formData.score === undefined
+    ) {
       alert("Please fill in all required fields.");
       return;
     }
 
     try {
       await dispatch(addGrade(formData as Grade)).unwrap();
-      setFormData({ student: undefined, course: undefined, assessment_type: "", score: undefined });
+      setFormData({
+        student: undefined,
+        course: undefined,
+        assessment_type: "",
+        score: undefined,
+      });
       handleCloseModal();
     } catch (err) {
       console.error("Failed to add grade:", err);
       alert("Failed to add grade. Check console for details.");
     }
-  };
+  }, [formData, dispatch, handleCloseModal]); 
 
   if (loading) return <p>Loading grades...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -114,60 +127,12 @@ const GradesPage: React.FC = () => {
         >
           <div style={{ backgroundColor: "white", padding: "2rem", borderRadius: "8px", width: "400px" }}>
             <h3>Create Grade</h3>
-            <form onSubmit={handleSubmit}>
-              <div style={{ marginBottom: "1rem" }}>
-                <label>Student ID:</label>
-                <input
-                  type="number"
-                  name="student"
-                  value={formData.student || ""}
-                  onChange={handleChange}
-                  style={{ width: "100%", padding: "0.5rem" }}
-                  required
-                />
-              </div>
-              <div style={{ marginBottom: "1rem" }}>
-                <label>Course ID:</label>
-                <input
-                  type="number"
-                  name="course"
-                  value={formData.course || ""}
-                  onChange={handleChange}
-                  style={{ width: "100%", padding: "0.5rem" }}
-                  required
-                />
-              </div>
-              <div style={{ marginBottom: "1rem" }}>
-                <label>Assessment Type:</label>
-                <input
-                  type="text"
-                  name="assessment_type"
-                  value={formData.assessment_type}
-                  onChange={handleChange}
-                  style={{ width: "100%", padding: "0.5rem" }}
-                  required
-                />
-              </div>
-              <div style={{ marginBottom: "1rem" }}>
-                <label>Score:</label>
-                <input
-                  type="number"
-                  name="score"
-                  value={formData.score || ""}
-                  onChange={handleChange}
-                  style={{ width: "100%", padding: "0.5rem" }}
-                  required
-                />
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <button type="submit" style={{ padding: "0.5rem 1rem", backgroundColor: "#4CAF50", color: "white", border: "none", borderRadius: "4px" }}>
-                  Submit
-                </button>
-                <button type="button" onClick={handleCloseModal} style={{ padding: "0.5rem 1rem", border: "1px solid #ccc", borderRadius: "4px" }}>
-                  Cancel
-                </button>
-              </div>
-            </form>
+             <GradeForm
+              formData={formData}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+              handleCloseModal={handleCloseModal}
+            />
           </div>
         </div>
       )}
