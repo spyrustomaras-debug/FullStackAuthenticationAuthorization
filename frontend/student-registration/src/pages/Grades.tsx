@@ -4,6 +4,8 @@ import { fetchGrades, addGrade, selectGrades, type Grade } from "../store/grades
 import type { AppDispatch, RootState } from "../store";
 import { useNavigate } from "react-router-dom";
 import GradeForm from "./GradeForm";
+import GradesTable from "./GradesTable";
+import "../style/GradeModal.css";
 
 
 const GradesPage: React.FC = () => {
@@ -89,53 +91,23 @@ const GradesPage: React.FC = () => {
         </button>
       )}
 
-      <table style={{ borderCollapse: "collapse", width: "100%" }}>
-        <thead>
-          <tr>
-            <th style={{ border: "1px solid black", padding: "0.5rem" }}>ID</th>
-            <th style={{ border: "1px solid black", padding: "0.5rem" }}>Student</th>
-            <th style={{ border: "1px solid black", padding: "0.5rem" }}>Subject</th>
-            <th style={{ border: "1px solid black", padding: "0.5rem" }}>Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          {grades.map((grade) => (
-            <tr key={grade.id}>
-              <td style={{ border: "1px solid black", padding: "0.5rem" }}>{grade.id}</td>
-              <td style={{ border: "1px solid black", padding: "0.5rem" }}>{grade.student}</td>
-              <td style={{ border: "1px solid black", padding: "0.5rem" }}>{grade.subject}</td>
-              <td style={{ border: "1px solid black", padding: "0.5rem" }}>{grade.score}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <GradesTable grades={grades} />
 
       {/* Modal */}
       {isModalOpen && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <div style={{ backgroundColor: "white", padding: "2rem", borderRadius: "8px", width: "400px" }}>
-            <h3>Create Grade</h3>
-             <GradeForm
-              formData={formData}
-              handleChange={handleChange}
-              handleSubmit={handleSubmit}
-              handleCloseModal={handleCloseModal}
-            />
-          </div>
+      <div className="modal-overlay">
+        <div className="modal-content">
+          <h3>Create Grade</h3>
+          <GradeForm
+            formData={formData}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            handleCloseModal={handleCloseModal}
+          />
         </div>
+      </div>
       )}
+
     </div>
   );
 };
