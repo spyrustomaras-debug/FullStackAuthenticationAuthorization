@@ -1,18 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "./api";
 import type { RootState } from "../store";
 
 // Types
-interface Student {
-  id: number;
-  user: string;
-}
-
-interface Course {
-  id: number;
-  name: string;
-  students: Student[];
-}
+interface Student { id: number; user: string; }
+interface Course { id: number; name: string; students: Student[]; }
+interface NewCourse { name: string; description: string; credits: number; student_ids: number[]; }
 
 interface CoursesState {
   courses: Course[];
@@ -28,58 +21,44 @@ const initialState: CoursesState = {
   error: null,
 };
 
-// Async thunk to fetch courses
-export const fetchCourses = createAsyncThunk(
+// Fetch courses
+export const fetchCourses = createAsyncThunk<Course[], void, { state: RootState }>(
   "courses/fetchCourses",
-  async (_, { getState, rejectWithValue }) => {
-    const state = getState() as RootState;
-    const token = state.auth.access;
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/courses/", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await api.get("courses/");
       return response.data;
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.detail || "Failed to fetch courses");
+      const message = err.response?.data?.detail || err.message || "Failed to fetch courses";
+      return rejectWithValue(message);
     }
   }
 );
 
-// Async thunk to fetch students
-export const fetchStudents = createAsyncThunk(
+// Fetch students
+export const fetchStudents = createAsyncThunk<Student[], void, { state: RootState }>(
   "courses/fetchStudents",
-  async (_, { getState, rejectWithValue }) => {
-    const state = getState() as RootState;
-    const token = state.auth.access;
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/students/", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await api.get("students/");
       return response.data;
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.detail || "Failed to fetch students");
+      const message = err.response?.data?.detail || err.message || "Failed to fetch students";
+      return rejectWithValue(message);
     }
   }
 );
 
-// Async thunk to create a course
-export const createCourse = createAsyncThunk(
+// Create course
+export const createCourse = createAsyncThunk<Course, NewCourse, { state: RootState }>(
   "courses/createCourse",
-  async (
-    courseData: { name: string; description: string; credits: number; student_ids: number[] },
-    { getState, rejectWithValue }
-  ) => {
-    const state = getState() as RootState;
-    const token = state.auth.access;
+  async (courseData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/courses/",
-        courseData,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await api.post("courses/", courseData);
       return response.data;
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.detail || "Failed to create course");
+      const message = err.response?.data?.detail || err.message || "Failed to create course";
+      return rejectWithValue(message);
     }
   }
 );
@@ -87,14 +66,13 @@ export const createCourse = createAsyncThunk(
 export const coursesSlice = createSlice({
   name: "courses",
   initialState,
-  reducers: {},
+  reducers: {
+    clearError: (state) => { state.error = null; }
+  },
   extraReducers: (builder) => {
     builder
       // Fetch courses
-      .addCase(fetchCourses.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      .addCase(fetchCourses.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(fetchCourses.fulfilled, (state, action) => {
         state.loading = false;
         state.courses = action.payload;
@@ -104,17 +82,23 @@ export const coursesSlice = createSlice({
         state.error = action.payload as string;
       })
       // Fetch students
+      .addCase(fetchStudents.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(fetchStudents.fulfilled, (state, action) => {
+        state.loading = false;
         state.students = action.payload;
       })
       .addCase(fetchStudents.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload as string;
       })
       // Create course
+      .addCase(createCourse.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(createCourse.fulfilled, (state, action) => {
+        state.loading = false;
         state.courses.push(action.payload);
       })
       .addCase(createCourse.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload as string;
       });
   },
@@ -125,5 +109,7 @@ export const selectCourses = (state: RootState) => state.courses.courses;
 export const selectCoursesLoading = (state: RootState) => state.courses.loading;
 export const selectCoursesError = (state: RootState) => state.courses.error;
 export const selectStudents = (state: RootState) => state.courses.students;
+
+export const { clearError } = coursesSlice.actions;
 
 export default coursesSlice.reducer;
