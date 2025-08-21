@@ -3,6 +3,7 @@ import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar"; // Navbar should stay eager (always used)
 import Loader from "./components/Loader"; // 🔥 import new loader
+import ProtectedRoute from "./components/ProtectedRoute";
 
 
 // Lazy-loaded pages
@@ -22,7 +23,11 @@ function App() {
         <Suspense fallback={<Loader />}>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/students" element={<Students />} />
+            <Route path="/students" element={
+              <ProtectedRoute>
+                <Students />
+              </ProtectedRoute>
+            } />
             <Route path="/register" element={<Register />} />
             <Route path="/grades" element={<Grades />} />
             <Route path="/login" element={<Login />} />
