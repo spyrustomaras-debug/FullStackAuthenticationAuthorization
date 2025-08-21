@@ -23,6 +23,11 @@ const Students: React.FC = () => {
     return (total / students.length).toFixed(2); // rounded to 2 decimal places
   }, [students]);
 
+  const sortedStudents = useMemo(() => {
+    return [...students].sort((a, b) => a.user.localeCompare(b.user));
+  }, [students]);
+
+
   return (
     <div style={{ paddingTop: "4rem" }}>
       <h1>Students</h1>
@@ -34,20 +39,20 @@ const Students: React.FC = () => {
 
       <h2>Average Grade: {averageGrade}</h2>
 
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <table role="table" style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>DOB</th>
-            <th>Enrollment</th>
-            <th>Address</th>
-            <th>Phone</th>
-            <th>Grade</th>
+          <tr role="row">
+            <th role="columnHeader">ID</th>
+            <th role="columnHeader">Name</th>
+            <th role="columnHeader">DOB</th>
+            <th role="columnHeader">Enrollment</th>
+            <th role="columnHeader">Address</th>
+            <th role="columnHeader">Phone</th>
+            <th role="columnHeader">Grade</th>
           </tr>
         </thead>
         <tbody>
-        {students.map((s) => (
+        {sortedStudents.map((s) => (
           <StudentRow key={s.id} student={s} />
         ))}
       </tbody>
