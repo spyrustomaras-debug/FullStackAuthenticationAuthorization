@@ -30,15 +30,17 @@ function renderWithStore(ui: React.ReactElement) {
   return render(<Provider store={store}>{ui}</Provider>);
 }
 
-test("renders courses list", () => {
+beforeEach(() => {
   renderWithStore(<Home />);
+});
+
+test("renders courses list", () => {
   expect(screen.getByText("Math")).toBeInTheDocument();
   expect(screen.getByText("Science")).toBeInTheDocument();
   expect(screen.getByText(/Alice/)).toBeInTheDocument();
 });
 
 test("opens and closes create course modal", () => {
-  renderWithStore(<Home />);
 
   // modal should not exist initially
   expect(screen.queryByRole("heading", { name: /create course/i })).not.toBeInTheDocument();
