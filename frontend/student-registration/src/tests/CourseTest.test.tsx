@@ -3,6 +3,16 @@ import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import coursesReducer from "../store/courseSlice";
 import Home from "../pages/Home";
+import api from "../store/api";
+import { vi } from "vitest"; // 👈 import vi
+
+// 🔹 Mock the api module with Vitest
+vi.mock("../store/api");
+
+const mockedApi = api as unknown as {
+  post: ReturnType<typeof vi.fn>;
+  get: ReturnType<typeof vi.fn>;
+};
 
 const mockCourses = [
   { id: 1, name: "Math", students: [{ id: 1, user: "Alice" }] },
@@ -27,11 +37,14 @@ function renderWithStore(ui: React.ReactElement) {
     },
   });
 
-  return render(<Provider store={store}>{ui}</Provider>);
+  return { ...render(<Provider store={store}>{ui}</Provider>), store };
 }
 
+let store: ReturnType<typeof configureStore>;
+
 beforeEach(() => {
-  renderWithStore(<Home />);
+  const rendered = renderWithStore(<Home />);
+  store = rendered.store;
 });
 
 test("renders courses list", () => {
@@ -41,19 +54,47 @@ test("renders courses list", () => {
 });
 
 test("opens and closes create course modal", () => {
-
-  // modal should not exist initially
   expect(screen.queryByRole("heading", { name: /create course/i })).not.toBeInTheDocument();
 
-  // click button to open modal
   fireEvent.click(screen.getByRole("button", { name: /create course/i }));
 
-  // now modal should appear
   expect(screen.getByRole("heading", { name: /create course/i })).toBeInTheDocument();
 
-  // click cancel to close modal
   fireEvent.click(screen.getByRole("button", { name: /cancel/i }));
 
-  // modal should disappear
   expect(screen.queryByRole("heading", { name: /create course/i })).not.toBeInTheDocument();
+});
+
+test("creates a new course through modal", async () => {
+  // mock API response
+  (mockedApi.post as any).mockResolvedValueOnce({
+    data: {
+      id: 3,
+      name: "History",
+      description: "World history course",
+      credits: 3,
+      students: [{ id: 2, user: "Bob" }],
+    },
+  });
+
+  fireEvent.click(screen.getByRole("button", { name: /create course/i }));
+
+  fireEvent.change(screen.getByPlaceholderText(/name/i), {
+    target: { value: "History" },
+  });
+  fireEvent.change(screen.getByPlaceholderText(/description/i), {
+    target: { value: "World history course" },
+  });
+  fireEvent.change(screen.getByPlaceholderText(/credits/i), {
+    target: { value: 3 },
+  });
+
+  fireEvent.change(screen.getByRole("listbox"), {
+    target: { value: "2" },
+  });
+
+  fireEvent.click(screen.getByRole("button", { name: /^create$/i }));
+
+  expect(await screen.findByText("History")).toBeInTheDocument();
+  expect(await screen.findByText(/Bob/)).toBeInTheDocument();
 });
