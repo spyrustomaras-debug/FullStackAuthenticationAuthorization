@@ -29,9 +29,17 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/register" element={<Register />} />
-            <Route path="/grades" element={<Grades />} />
+            <Route path="/grades" element={
+              <ProtectedRoute>
+                <Grades />
+              </ProtectedRoute>
+            } />
             <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<TeacherDashboard />} />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <TeacherDashboard />
+              </ProtectedRoute>
+            } />
           </Routes>
         </Suspense>
       </div>
