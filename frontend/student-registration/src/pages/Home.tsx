@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { AppDispatch } from "../store/index";
+
 import {
   fetchCourses,
   selectCourses,
@@ -18,13 +19,15 @@ const Home: React.FC = () => {
   const loading = useSelector(selectCoursesLoading);
   const error = useSelector(selectCoursesError);
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     name: "",
     description: "",
     credits: 0,
     student_ids: [] as number[],
-  });
+  };
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [formData, setFormData] = useState(initialFormData);
 
   useEffect(() => {
     dispatch(fetchCourses());
@@ -47,7 +50,12 @@ const Home: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await dispatch(createCourse(formData));
+    try {
+      await dispatch(createCourse(formData)).unwrap();
+      console.log("course created")
+    } catch (err) {
+      console.log("error",err)
+    }    
     setModalOpen(false);
     setFormData({ name: "", description: "", credits: 0, student_ids: [] });
     dispatch(fetchCourses()); // Refresh course list
@@ -68,7 +76,7 @@ const Home: React.FC = () => {
       <ul>
         {courses.map(course => (
           <li key={course.id}>
-            <strong>{course.name}</strong> — Students: {course.students.map(s => s.user).join(", ")}
+            <strong>{course.name}</strong> — Students: {course.students.length ? course.students.map(s => s.user).join(", ") : "None"}
           </li>
         ))}
       </ul>

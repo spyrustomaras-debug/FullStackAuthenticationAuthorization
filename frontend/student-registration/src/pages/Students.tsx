@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import type { AppDispatch, RootState } from "../store";
 import { fetchStudents, selectStudents, selectStudentsLoading, selectStudentsError } from "../store/studentSlice";
 import "./Student.scss"; // 👈 import SCSS
-
+import { StudentRow } from "./StudentRow";
 
 const Students: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -29,6 +29,8 @@ const Students: React.FC = () => {
 
       {loading && <p>Loading students...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
+      {!loading && students.length === 0 && <p>No students found.</p>}
+
 
       <h2>Average Grade: {averageGrade}</h2>
 
@@ -45,18 +47,11 @@ const Students: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {students.map((s) => (
-            <tr key={s.id} style={{ borderBottom: "1px solid #ccc" }}>
-              <td>{s.id}</td>
-              <td>{s.user}</td>
-              <td>{s.date_of_birth}</td>
-              <td>{s.enrollment_number}</td>
-              <td>{s.address}</td>
-              <td>{s.phone_number}</td>
-              <td>{s.grade_level}</td>
-            </tr>
-          ))}
-        </tbody>
+        {students.map((s) => (
+          <StudentRow key={s.id} student={s} />
+        ))}
+      </tbody>
+
       </table>
     </div>
   );

@@ -14,13 +14,15 @@ const GradesPage: React.FC = () => {
   const { grades, loading, error } = useSelector(selectGrades);
   const userRole = useSelector((state: RootState) => state.auth.role);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState<Partial<Grade>>({
+  const initialFormState: Partial<Grade> = {
     student: undefined,
     course: undefined,
     assessment_type: "",
     score: undefined,
-  });
+  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState<Partial<Grade>>(initialFormState);
 
   useEffect(() => {
     if (userRole === "teacher" || userRole === "student") {

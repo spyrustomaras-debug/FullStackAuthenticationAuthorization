@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import type { RootState } from "../store";
 
-interface Student {
+export interface Student {
   id: number;
   user: string;
   date_of_birth: string;
