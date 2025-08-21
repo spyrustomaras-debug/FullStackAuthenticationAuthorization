@@ -25,9 +25,11 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (credentials: { username: string; password: string }, thunkAPI) => {
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/login/", credentials, {
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/login/",
+        credentials,
+        { headers: { "Content-Type": "application/json" } }
+      );
 
       const { access, refresh, role, id: user_id } = response.data.user;
 
@@ -40,10 +42,26 @@ export const loginUser = createAsyncThunk(
       return { access, refresh, role, user_id: user_id.toString() };
     } catch (err: any) {
       console.error("Backend error response:", err.response?.data);
-      return thunkAPI.rejectWithValue(err.response?.data || "Login failed");
+
+      // 🟢 Directly map backend error messages
+      if (err.response) {
+        const { status, data } = err.response;
+
+        if (status === 400 && data.error) {
+          return thunkAPI.rejectWithValue(data.error); // "Username and password are required"
+        }
+
+        if (status === 401 && data.error) {
+          return thunkAPI.rejectWithValue(data.error); // "Invalid username or password"
+        }
+      }
+
+      // fallback if backend doesn’t send expected format
+      return thunkAPI.rejectWithValue("Login failed. Please try again.");
     }
   }
 );
+
 
 const authSlice = createSlice({
   name: "auth",
@@ -76,7 +94,7 @@ const authSlice = createSlice({
     });
     builder.addCase(loginUser.rejected, (state, action) => {
       state.loading = false;
-      state.error = JSON.stringify(action.payload);
+      state.error = (action.payload as string) || "Unknown error occurred";
     });
   },
 });

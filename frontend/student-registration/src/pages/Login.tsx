@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../store/authSlice";
 import type { AppDispatch, RootState } from "../store/index";
+import Modal from "../components/Modal"; // 🔥 import modal
 
 // ---------------- Input Component ----------------
 interface InputProps {
@@ -21,29 +22,29 @@ const Input: React.FC<InputProps> = ({ type = "text", placeholder, value, onChan
   />
 );
 
-
 const Login = () => {
-  const dispatch = useDispatch<AppDispatch>(); // ✅ Type here
+  const dispatch = useDispatch<AppDispatch>();
   const auth = useSelector((state: RootState) => state.auth);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-
+  const [showModal, setShowModal] = useState(false); // 🔥 modal state
 
   const handleLogin = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const result = await dispatch(loginUser({ username, password })).unwrap();
-       // Clear input fields
+
+      // Clear input fields
       setUsername("");
       setPassword("");
       setMessage(`Welcome ${result.role} (User ID: ${result.user_id})`);
     } catch (err) {
-      setMessage("Login failed. Check console for details.");
+      // Show modal instead of inline error
+      setMessage(auth.error || "Login failed. Please try again.");
+      setShowModal(true);
     }
-  }, [username, password, dispatch]);
-
-
+  }, [username, password, dispatch, auth.error]);
 
   return (
     <div>
@@ -64,10 +65,15 @@ const Login = () => {
           {auth.loading ? "Logging in..." : "Login"}
         </button>
       </form>
-      {message && <p className="message">{message}</p>}
 
-
-      {auth.error && <p style={{ color: "red" }}>{auth.error}</p>}
+      {/* ✅ Modal for login error */}
+      {showModal && (
+        <Modal
+          title="Login Failed"
+          message={message}
+          onClose={() => setShowModal(false)}
+        />
+      )}
 
       {auth.role && (
         <div>
