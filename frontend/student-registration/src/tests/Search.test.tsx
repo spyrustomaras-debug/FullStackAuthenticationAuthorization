@@ -1,10 +1,10 @@
-import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import { vi } from "vitest";
 
-import searchReducer, { searchStudents, clearSearchResults } from "../store/searchSlice";
+import searchReducer, { searchStudents } from "../store/searchSlice";
 import coursesReducer from "../store/courseSlice";
 import Home from "../pages/Home";
 import axios from "axios";
@@ -31,7 +31,7 @@ const mockedAxios = axios as unknown as {
 };
 
 // Mock auth reducer
-const authReducer = (state = { access: "fake-token" }, action: any) => state;
+const authReducer = (state = { access: "fake-token" }) => state;
 const preloadedCoursesState = {
   courses: [
     {

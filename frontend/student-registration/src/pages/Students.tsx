@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import type { AppDispatch, RootState } from "../store";
+import type { AppDispatch } from "../store";
 import { fetchStudents, selectStudents, selectStudentsLoading, selectStudentsError } from "../store/studentSlice";
 import "./Student.scss"; // 👈 import SCSS
 import { StudentRow } from "./StudentRow";
+
 
 const Students: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -38,7 +39,7 @@ const Students: React.FC = () => {
 
 
       <h2>Average Grade: {averageGrade}</h2>
-
+      
       <table role="table" style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr role="row">

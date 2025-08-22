@@ -1,10 +1,9 @@
 // src/App.tsx
-import React, { Suspense, lazy } from "react";
+import { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar"; // Navbar should stay eager (always used)
 import Loader from "./components/Loader"; // 🔥 import new loader
 import ProtectedRoute from "./components/ProtectedRoute";
-import { LanguageSwitcher } from "./components/LanguageSwitcher";
 
 // Lazy-loaded pages
 const Home = lazy(() => import("./pages/Home"));

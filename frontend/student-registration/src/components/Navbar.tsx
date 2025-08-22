@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "../store";
 import { logout } from "../store/authSlice";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import "../styles/styles.css"
 
 const Navbar: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -72,17 +73,10 @@ const Navbar: React.FC = () => {
 
         {/* Show Register/Login only if not logged in */}
         {!isLoggedIn && (
-          <>
-            <Link
-              to="/register"
-              style={{ color: "#fff", textDecoration: "none", marginRight: "1rem" }}
-            >
-              Register
-            </Link>
-            <Link to="/login" style={{ color: "#fff", textDecoration: "none" }}>
-              Login
-            </Link>
-          </>
+          <div className="nav-links">
+            <Link to="/register">Register</Link>
+            <Link to="/login">Login</Link>
+          </div>
         )}
 
         {/* Show Logout if logged in */}

@@ -1,14 +1,13 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
-import gradesReducer, { type Grade } from "../store/gradesSlice";
+import gradesReducer from "../store/gradesSlice";
 import GradesPage from "../pages/Grades";
 import { vi } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 
 // Correctly mock axios with default export
-vi.mock("axios", async (importOriginal) => {
-  const actual = await importOriginal<any>();
+vi.mock("axios", async () => {
   return {
     default: {
       get: vi.fn(),
@@ -24,7 +23,7 @@ const mockedAxios = axios as unknown as {
 };
 
 // Mock auth reducer
-const authReducer = (state = { role: "teacher", access: "token" }, action: any) => state;
+const authReducer = (state = { role: "teacher", access: "token" }) => state;
 
 // Helper to render with store
 function renderWithStore(ui: React.ReactElement) {
@@ -39,11 +38,6 @@ function renderWithStore(ui: React.ReactElement) {
   return { ...render(<Provider store={store}><MemoryRouter>{ui}</MemoryRouter></Provider>), store };
 }
 
-// Mock data
-const mockGrades: Grade[] = [
-  { id: 1, student: 1, course: 1, assessment_type: "Exam", score: 90 },
-  { id: 2, student: 2, course: 1, assessment_type: "Quiz", score: 85 },
-];
 
 beforeEach(() => {
   vi.clearAllMocks();

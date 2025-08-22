@@ -91,14 +91,6 @@ const Home: React.FC = () => {
     dispatch(fetchCourses()); // Refresh course list
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim() !== "") {
-      dispatch(searchStudents(searchQuery));
-    } else {
-      dispatch(clearSearchResults());
-    }
-  };
 
   return (
     <div style={{ paddingTop: "4rem" }}>

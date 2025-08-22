@@ -1,17 +1,19 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useCallback, useEffect, useState, lazy, Suspense } from "react";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { fetchGrades, addGrade, selectGrades, type Grade } from "../store/gradesSlice";
 import type { AppDispatch, RootState } from "../store";
-import { useNavigate } from "react-router-dom";
-import GradeForm from "./GradeForm";
-import GradesTable from "./GradesTable";
 import "../style/GradeModal.css";
 
+// Lazy-load GradeForm to reduce initial JS
+const GradeForm = lazy(() => import("./GradeForm"));
+
+// Memoize GradesTable to prevent unnecessary re-renders
+import GradesTable from "./GradesTable";
+const MemoizedGradesTable = React.memo(GradesTable);
 
 const GradesPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
-  const { grades, loading, error } = useSelector(selectGrades);
+  const { grades, loading, error } = useSelector(selectGrades, shallowEqual);
   const userRole = useSelector((state: RootState) => state.auth.role);
 
   const initialFormState: Partial<Grade> = {
@@ -24,50 +26,47 @@ const GradesPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<Partial<Grade>>(initialFormState);
 
+  // Fetch grades only if user is teacher or student
   useEffect(() => {
     if (userRole === "teacher" || userRole === "student") {
       dispatch(fetchGrades());
     }
   }, [dispatch, userRole]);
 
-  const handleOpenModal = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "score" || name === "student" || name === "course" ? Number(value) : value,
-    }));
-  };
-
+  // Memoized handlers
+  const handleOpenModal = useCallback(() => setIsModalOpen(true), []);
+  const handleCloseModal = useCallback(() => setIsModalOpen(false), []);
   
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (
-      !formData.student ||
-      !formData.course ||
-      !formData.assessment_type ||
-      formData.score === undefined
-    ) {
-      alert("Please fill in all required fields.");
-      return;
-    }
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: name === "score" || name === "student" || name === "course" ? Number(value) : value,
+      }));
+    },
+    []
+  );
 
-    try {
-      await dispatch(addGrade(formData as Grade)).unwrap();
-      setFormData({
-        student: undefined,
-        course: undefined,
-        assessment_type: "",
-        score: undefined,
-      });
-      handleCloseModal();
-    } catch (err) {
-      console.error("Failed to add grade:", err);
-      alert("Failed to add grade. Check console for details.");
-    }
-  }, [formData, dispatch, handleCloseModal]); 
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!formData.student || !formData.course || !formData.assessment_type || formData.score === undefined) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+
+      try {
+        await dispatch(addGrade(formData as Grade)).unwrap();
+        setFormData(initialFormState);
+        handleCloseModal();
+      } catch (err) {
+        console.error("Failed to add grade:", err);
+        alert("Failed to add grade. Check console for details.");
+      }
+    },
+    [formData, dispatch, handleCloseModal]
+  );
 
   if (loading) return <p>Loading grades...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -93,23 +92,24 @@ const GradesPage: React.FC = () => {
         </button>
       )}
 
-      <GradesTable grades={grades} />
+      <MemoizedGradesTable grades={grades} />
 
-      {/* Modal */}
+      {/* Lazy-loaded modal */}
       {isModalOpen && (
-      <div className="modal-overlay">
-        <div className="modal-content">
-          <h3>Create Grade</h3>
-          <GradeForm
-            formData={formData}
-            handleChange={handleChange}
-            handleSubmit={handleSubmit}
-            handleCloseModal={handleCloseModal}
-          />
-        </div>
-      </div>
+        <Suspense fallback={<div>Loading form...</div>}>
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h3>Create Grade</h3>
+              <GradeForm
+                formData={formData}
+                handleChange={handleChange}
+                handleSubmit={handleSubmit}
+                handleCloseModal={handleCloseModal}
+              />
+            </div>
+          </div>
+        </Suspense>
       )}
-
     </div>
   );
 };
