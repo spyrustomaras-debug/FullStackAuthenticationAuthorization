@@ -12,3 +12,5 @@ export const LanguageSwitcher: React.FC = () => {
     </div>
   );
 };
+
+export default LanguageSwitcher;

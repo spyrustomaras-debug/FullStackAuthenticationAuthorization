@@ -8,3 +8,40 @@
 .nav-links a:last-child {
   margin-right: 0;
 }
+
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #333;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  z-index: 1000;
+}
+
+.navbar-brand a {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #fff;
+  text-decoration: none;
+}
+
+.navbar-links .nav-link {
+  color: #fff;
+  text-decoration: none;
+  margin-right: 1rem;
+}
+
+.nav-logout {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  margin-left: 1rem;
+  font-size: 1rem;
+}
