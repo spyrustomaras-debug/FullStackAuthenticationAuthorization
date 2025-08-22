@@ -12,49 +12,57 @@ const GradeForm: React.FC<GradeFormProps> = ({ formData, handleChange, handleSub
   return (
     <form onSubmit={handleSubmit}>
       <div style={{ marginBottom: "1rem" }}>
-        <label>Student ID:</label>
-        <input
-          type="number"
-          name="student"
-          value={formData.student || ""}
-          onChange={handleChange}
-          style={{ width: "100%", padding: "0.5rem" }}
-          required
-        />
-      </div>
-      <div style={{ marginBottom: "1rem" }}>
-        <label>Course ID:</label>
-        <input
-          type="number"
-          name="course"
-          value={formData.course || ""}
-          onChange={handleChange}
-          style={{ width: "100%", padding: "0.5rem" }}
-          required
-        />
-      </div>
-      <div style={{ marginBottom: "1rem" }}>
-        <label>Assessment Type:</label>
-        <input
-          type="text"
-          name="assessment_type"
-          value={formData.assessment_type}
-          onChange={handleChange}
-          style={{ width: "100%", padding: "0.5rem" }}
-          required
-        />
-      </div>
-      <div style={{ marginBottom: "1rem" }}>
-        <label>Score:</label>
-        <input
-          type="number"
-          name="score"
-          value={formData.score || ""}
-          onChange={handleChange}
-          style={{ width: "100%", padding: "0.5rem" }}
-          required
-        />
-      </div>
+      <label htmlFor="student">Student ID:</label>
+      <input
+        id="student"
+        type="number"
+        name="student"
+        value={formData.student || ""}
+        onChange={handleChange}
+        style={{ width: "100%", padding: "0.5rem" }}
+        required
+      />
+    </div>
+
+    <div style={{ marginBottom: "1rem" }}>
+      <label htmlFor="course">Course ID:</label>
+      <input
+        id="course"
+        type="number"
+        name="course"
+        value={formData.course || ""}
+        onChange={handleChange}
+        style={{ width: "100%", padding: "0.5rem" }}
+        required
+      />
+    </div>
+
+    <div style={{ marginBottom: "1rem" }}>
+      <label htmlFor="assessment_type">Assessment Type:</label>
+      <input
+        id="assessment_type"
+        type="text"
+        name="assessment_type"
+        value={formData.assessment_type || ""}
+        onChange={handleChange}
+        style={{ width: "100%", padding: "0.5rem" }}
+        required
+      />
+    </div>
+
+    <div style={{ marginBottom: "1rem" }}>
+      <label htmlFor="score">Score:</label>
+      <input
+        id="score"
+        type="number"
+        name="score"
+        value={formData.score || ""}
+        onChange={handleChange}
+        style={{ width: "100%", padding: "0.5rem" }}
+        required
+      />
+    </div>
+
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <button
           type="submit"
