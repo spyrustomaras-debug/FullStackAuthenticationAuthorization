@@ -1,19 +1,45 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import coursesReducer from "../store/courseSlice";
-import searchReducer from "../store/searchSlice";
+import searchReducer, { searchStudents } from "../store/searchSlice";
+import userEvent from "@testing-library/user-event";
+
 import Home from "../pages/Home";
 import api from "../store/api";
 import { vi } from "vitest"; // 👈 import vi
+import axios from "axios";
 
 // 🔹 Mock the api module with Vitest
 vi.mock("../store/api");
+
+vi.mock("../store/searchSlice", async() => {
+  const actual = await vi.importActual("../store/searchSlice");
+  return {
+    ...actual,
+    searchStudents: vi.fn(() => ({type: "searchStudents/mock"})),
+  };
+});
+
+// Mock axios to avoid real network requests
+// At the top of your test file
+vi.mock("../store/api", () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+    interceptors: { request: { use: vi.fn() } },
+  },
+}));
+const mockedAxios = axios as unknown as { get: ReturnType<typeof vi.fn> };
 
 const mockedApi = api as unknown as {
   post: ReturnType<typeof vi.fn>;
   get: ReturnType<typeof vi.fn>;
 };
+
+mockedAxios.get = vi.fn().mockResolvedValue({
+  data: [{ id: 1, user: "John", enrollment_number: "1234" }],
+});
 
 const mockCourses = [
   { id: 1, name: "Math", students: [{ id: 1, user: "Alice" }] },
@@ -35,6 +61,8 @@ function renderWithStore(ui: React.ReactElement) {
         loading: false,
         error: null,
       },
+      search: { results: [], loading: false, error: null },
+
     },
   });
 
@@ -47,6 +75,9 @@ beforeEach(() => {
   const rendered = renderWithStore(<Home />);
   store = rendered.store;
 });
+
+
+
 
 test("renders courses list", () => {
   expect(screen.getByText("Math")).toBeInTheDocument();

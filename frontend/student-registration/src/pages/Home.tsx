@@ -110,6 +110,7 @@ const Home: React.FC = () => {
         placeholder="Search students..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
+        data-testid="search-input"  // <-- add here
         style={{ marginBottom: "1rem", width: "300px", padding: "0.5rem", marginRight:"1rem"}}
       />
       {searchLoading && <p>Searching students...</p>}
@@ -135,7 +136,7 @@ const Home: React.FC = () => {
       <ul>
         {courses.map(course => (
           <li key={course.id}>
-            <strong>{course.name}</strong> — Students: {course.students.length ? course.students.map(s => s.user).join(", ") : "None"}
+            <strong>{course.name}</strong> — Students: {course.students?.length ? course.students.map(s => s.user).join(", ") : "None"}
           </li>
         ))}
       </ul>
