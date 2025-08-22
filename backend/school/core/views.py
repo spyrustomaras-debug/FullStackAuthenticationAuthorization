@@ -17,6 +17,28 @@ from rest_framework.permissions import IsAuthenticated, SAFE_METHODS, BasePermis
 
 User = get_user_model()
 
+# students/views.py
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.db.models import Q
+from .models import Student
+from .serializers import StudentSerializer
+
+class StudentSearchView(APIView):
+    def get(self, request):
+        query = request.GET.get('q', '')
+        if query:
+            students = Student.objects.filter(
+                Q(user__username__icontains=query) | Q(enrollment_number__icontains=query)
+            )
+        else:
+            students = Student.objects.none()
+
+        serializer = StudentSerializer(students, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class GradeListCreateView(generics.ListCreateAPIView):
     """
     API endpoint that allows teachers to create grades and anyone authenticated to view them.
