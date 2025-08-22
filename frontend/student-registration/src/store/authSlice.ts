@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-interface AuthState {
+export interface AuthState {
   access: string | null;
   refresh: string | null;
   role: string | null;
