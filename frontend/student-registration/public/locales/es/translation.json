@@ -1,0 +1,12 @@
+{
+  "login": {
+    "title": "Iniciar sesión",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "submit": "Acceder",
+    "loggingIn": "Iniciando sesión...",
+    "failedTitle": "Error de inicio",
+    "failedMessage": "Error al iniciar sesión. Inténtalo de nuevo.",
+    "welcome": "Bienvenido {{role}} (ID de usuario: {{id}})"
+  }
+}

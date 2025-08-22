@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "../store";
 import { logout } from "../store/authSlice";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 const Navbar: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -35,6 +36,9 @@ const Navbar: React.FC = () => {
         <Link to="/" style={{ color: "#fff", textDecoration: "none" }}>
           Portal
         </Link>
+      </div>
+      <div>
+        <LanguageSwitcher/>
       </div>
 
       <div>
