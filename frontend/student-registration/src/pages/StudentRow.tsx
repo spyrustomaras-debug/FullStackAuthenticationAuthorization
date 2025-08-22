@@ -12,3 +12,5 @@ export const StudentRow: React.FC<{ student: Student }> = React.memo(({ student 
     <td>{student.grade_level ?? "—"}</td>
   </tr>
 ));
+
+export default StudentRow
