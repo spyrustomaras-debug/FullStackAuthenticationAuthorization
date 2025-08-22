@@ -4,6 +4,7 @@ import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import type { RootState, AppDispatch } from "../store";
 import { logout } from "../store/authSlice";
 import "../styles/styles.css"
+import ThemeToggle from "./ThemeToggle";
 
 // Lazy-load LanguageSwitcher to reduce initial JS parsing
 const LanguageSwitcher = React.lazy(() => import("./LanguageSwitcher"));
@@ -75,6 +76,8 @@ const Navbar: React.FC = () => {
     <nav className="navbar">
       <div className="navbar-brand">
         <Link to="/">Portal</Link>
+        <ThemeToggle/>
+
       </div>
 
       {/* Lazy-load LanguageSwitcher with Suspense */}

@@ -5,6 +5,9 @@ import authReducer, { type AuthState } from "../store/authSlice";
 import Login from "../pages/Login";
 import axios from "axios";
 import { vi } from "vitest";
+import { ThemeProvider } from "../context/ThemeContext";
+import ThemeToggle from "../components/ThemeToggle";
+
 
 // 🔹 Mock axios globally
 vi.mock("axios");
@@ -108,5 +111,24 @@ test("failed login shows modal", async () => {
       expect(screen.getByText(/Welcome, teacher/i)).toBeInTheDocument();
       expect(screen.getByText(/You are a teacher user!/i)).toBeInTheDocument();
     });
+  });
+
+  it("should change the theme and update background", () => {
+    render(
+      <ThemeProvider>
+        <ThemeToggle />
+      </ThemeProvider>
+    );
+
+    const button = screen.getByTestId("theme-toggle");
+
+    // Default theme should be light
+    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
+
+    // Click toggle
+    fireEvent.click(button);
+
+    // Now it should switch to dark
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
   });
 });
