@@ -109,6 +109,4 @@ test("failed login shows modal", async () => {
       expect(screen.getByText(/You are a teacher user!/i)).toBeInTheDocument();
     });
   });
-
-  
 });
