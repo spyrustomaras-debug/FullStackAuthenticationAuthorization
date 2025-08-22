@@ -3,7 +3,8 @@ import registerReducer from "./registerSlice";
 import authReducer from "./authSlice";
 import coursesReducer from "./courseSlice";
 import studentsReducer from "./studentSlice";
-import gradesReducer from "./gradesSlice"
+import gradesReducer from "./gradesSlice";
+import searchReducer from "./searchSlice";
 
 
 export const store = configureStore({
@@ -13,6 +14,7 @@ export const store = configureStore({
     courses: coursesReducer,
     students: studentsReducer,
     grades: gradesReducer,
+    search: searchReducer,
   },
 });
 

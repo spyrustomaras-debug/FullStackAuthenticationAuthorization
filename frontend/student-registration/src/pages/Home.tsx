@@ -12,12 +12,24 @@ import {
   createCourse,
 } from "../store/courseSlice";
 
+import {
+  searchStudents,
+  selectSearchResults,
+  selectSearchError,
+  selectSearchLoading,
+  clearSearchResults,
+} from "../store/searchSlice";
+
 const Home: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const courses = useSelector(selectCourses);
   const students = useSelector(selectStudents);
   const loading = useSelector(selectCoursesLoading);
   const error = useSelector(selectCoursesError);
+
+  const searchResults = useSelector(selectSearchResults);
+  const searchLoading = useSelector(selectSearchLoading);
+  const searchError = useSelector(selectSearchError);
 
   const initialFormData = {
     name: "",
@@ -28,6 +40,8 @@ const Home: React.FC = () => {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState(initialFormData);
+  const [searchQuery, setSearchQuery] = useState("");
+
 
   useEffect(() => {
     dispatch(fetchCourses());
@@ -61,9 +75,44 @@ const Home: React.FC = () => {
     dispatch(fetchCourses()); // Refresh course list
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim() !== "") {
+      dispatch(searchStudents(searchQuery));
+    } else {
+      dispatch(clearSearchResults());
+    }
+  };
+
   return (
     <div style={{ paddingTop: "4rem" }}>
       <h1>Courses</h1>
+
+       {/* Search Section */}
+      <form onSubmit={handleSearch} style={{ marginBottom: "1rem" }}>
+        <input
+          type="text"
+          placeholder="Search students..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <button type="submit">Search</button>
+        <button type="button" onClick={() => { setSearchQuery(""); dispatch(clearSearchResults()); }}>
+          Clear
+        </button>
+      </form>
+
+      {searchLoading && <p>Searching students...</p>}
+      {searchError && <p style={{ color: "red" }}>{searchError}</p>}
+      {searchResults.length > 0 && (
+        <ul>
+          {searchResults.map((student: any) => (
+            <li key={student.id}>
+              {student.user} - {student.enrollment_number}
+            </li>
+          ))}
+        </ul>
+      )}
 
       {/* Create Course Button */}
       <button onClick={() => setModalOpen(true)} style={{ marginBottom: "1rem" }}>
