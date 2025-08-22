@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import coursesReducer from "../store/courseSlice";
+import searchReducer from "../store/searchSlice";
 import Home from "../pages/Home";
 import api from "../store/api";
 import { vi } from "vitest"; // 👈 import vi
@@ -26,7 +27,7 @@ const mockStudents = [
 
 function renderWithStore(ui: React.ReactElement) {
   const store = configureStore({
-    reducer: { courses: coursesReducer },
+    reducer: { courses: coursesReducer, search:searchReducer },
     preloadedState: {
       courses: {
         courses: mockCourses,

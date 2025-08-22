@@ -20,6 +20,9 @@ import {
   clearSearchResults,
 } from "../store/searchSlice";
 
+let debounceTimer: any;
+
+
 const Home: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const courses = useSelector(selectCourses);
@@ -47,6 +50,19 @@ const Home: React.FC = () => {
     dispatch(fetchCourses());
     dispatch(fetchStudents());
   }, [dispatch]);
+
+  // Live search on every input change with debounce
+  useEffect(() => {
+    if (debounceTimer) clearTimeout(debounceTimer);
+
+    debounceTimer = setTimeout(() => {
+      if (searchQuery.trim() !== "") {
+        dispatch(searchStudents(searchQuery));
+      } else {
+        dispatch(clearSearchResults());
+      }
+    }, 300); // 300ms debounce
+  }, [searchQuery, dispatch]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, options } = e.target as HTMLSelectElement;
@@ -88,20 +104,14 @@ const Home: React.FC = () => {
     <div style={{ paddingTop: "4rem" }}>
       <h1>Courses</h1>
 
-       {/* Search Section */}
-      <form onSubmit={handleSearch} style={{ marginBottom: "1rem" }}>
-        <input
-          type="text"
-          placeholder="Search students..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <button type="submit">Search</button>
-        <button type="button" onClick={() => { setSearchQuery(""); dispatch(clearSearchResults()); }}>
-          Clear
-        </button>
-      </form>
-
+      {/* Live Search Section */}
+      <input
+        type="text"
+        placeholder="Search students..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        style={{ marginBottom: "1rem", width: "300px", padding: "0.5rem", marginRight:"1rem"}}
+      />
       {searchLoading && <p>Searching students...</p>}
       {searchError && <p style={{ color: "red" }}>{searchError}</p>}
       {searchResults.length > 0 && (
