@@ -7,7 +7,7 @@ import {
   selectStudentsLoading,
   selectStudentsError,
 } from "../store/studentSlice";
-import "./Student.scss"; // SCSS
+import "../style/Students.css"; // SCSS
 
 // Lazy-load StudentRow to reduce initial JS parsing and execution
 const StudentRow = lazy(() => import("./StudentRow"));
@@ -83,7 +83,7 @@ const Students: React.FC = () => {
           </Suspense>
         </tbody>
         {totalPages > 1 && (
-          <div style={{marginTop:"1rem", display:"flex", gap:"0.5rem"}}>
+          <div className="pagination">
             <button
               disabled={currentPage === 1}
               onClick={() => handlePageChange(currentPage - 1)}
