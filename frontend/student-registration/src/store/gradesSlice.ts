@@ -16,13 +16,18 @@ export interface Grade {
 export const fetchGrades = createAsyncThunk(
   "grades/fetchGrades",
   async (_, { getState }) => {
-    const state = getState() as RootState;
-    const token = state.auth.access;
-    const response = await axios.get("http://localhost:8000/api/grades/", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log("response.data grades", response.data)
-    return response.data;
+    try {
+        const state = getState() as RootState;
+        const token = state.auth.access;
+        const response = await axios.get("http://localhost:8000/api/grades/", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log("response.data grades", response.data)
+        return response.data;
+    } catch (error:any) {
+        return rejectWithValue(error.response?.data || "Failed to fetch grades");
+    }
+
   }
 );
 
@@ -101,3 +106,7 @@ export const gradesSlice = createSlice({
 export const selectGrades = (state: RootState) => state.grades;
 
 export default gradesSlice.reducer;
+function rejectWithValue(arg0: any): any {
+  throw new Error("Function not implemented.");
+}
+
