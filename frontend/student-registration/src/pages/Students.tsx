@@ -63,26 +63,30 @@ const Students: React.FC = () => {
 
       <h2>Average Grade: {averageGrade}</h2>
 
-      <table role="table" style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr role="row">
-            <th>ID</th>
-            <th>Name</th>
-            <th>DOB</th>
-            <th>Enrollment</th>
-            <th>Address</th>
-            <th>Phone</th>
-            <th>Grade</th>
-          </tr>
-        </thead>
-        <tbody>
-          <Suspense fallback={<tr><td colSpan={7}>Loading students...</td></tr>}>
-            {currentStudents.map((s) => (
-              <StudentRow key={s.id} student={s} />
-            ))}
-          </Suspense>
-        </tbody>
-        {totalPages > 1 && (
+      <div className="table-container">
+        <table role="table">
+          <thead>
+            <tr role="row">
+              <th>ID</th>
+              <th>Name</th>
+              <th>DOB</th>
+              <th>Enrollment</th>
+              <th>Address</th>
+              <th>Phone</th>
+              <th>Grade</th>
+            </tr>
+          </thead>
+          <tbody>
+            <Suspense fallback={<tr><td colSpan={7}>Loading students...</td></tr>}>
+              {currentStudents.map((s) => (
+                <StudentRow key={s.id} student={s} />
+              ))}
+            </Suspense>
+          </tbody>
+        </table>
+      </div>
+
+      {totalPages > 1 && (
           <div className="pagination">
             <button
               disabled={currentPage === 1}
@@ -109,10 +113,7 @@ const Students: React.FC = () => {
             Next
           </button>
           </div>
-        )
-
-        }
-      </table>
+        )}
     </div>
   );
 };

@@ -1,31 +1,78 @@
+/* Container with left/right gaps */
+.table-container {
+  margin: 0 2rem; /* <-- adds gap on left & right */
+  overflow-x: auto; /* keeps table scrollable if too wide */
+}
+
+/* Table wrapper */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  text-align: left;
+}
+
+/* Table headers */
+thead th {
+  background-color: #f8f9fa;
+  padding: 12px 10px;
+  border: 1px solid #ddd;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap; /* prevents header text wrapping */
+}
+
+/* Table rows */
+tbody td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Zebra striping for rows */
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Hover effect */
+tbody tr:hover {
+  background-color: #f1f7ff;
+}
+
+/* Responsive - make table scroll horizontally if too wide */
+.table-container {
+  overflow-x: auto;
+}
+
+/* Pagination styling */
 .pagination {
   margin-top: 1.5rem;
   display: flex;
-  justify-content: center;  /* Center horizontally */
-  align-items: center;
+  justify-content: center;
   gap: 0.5rem;
 }
 
 .pagination button {
-  padding: 8px 14px;
+  padding: 6px 12px;
   border: 1px solid #ccc;
   border-radius: 6px;
   background: #fff;
   cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s ease-in-out;
-  min-width: 40px; /* keeps size consistent */
+  transition: background 0.2s ease;
+  min-width: 40px;
 }
 
 .pagination button:hover:not(:disabled) {
-  background: #f2f2f2;
+  background: #f0f0f0;
 }
 
 .pagination button.active {
   background: #007bff;
   color: white;
   border-color: #007bff;
-  font-weight: bold;
 }
 
 .pagination button:disabled {
