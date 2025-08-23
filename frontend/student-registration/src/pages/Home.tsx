@@ -12,6 +12,8 @@ import {
   createCourse,
 } from "../store/courseSlice";
 
+import { useDebounce } from "../hooks/useDebounce";
+
 import {
   searchStudents,
   selectSearchResults,
@@ -34,6 +36,20 @@ const Home: React.FC = () => {
   const searchLoading = useSelector(selectSearchLoading);
   const searchError = useSelector(selectSearchError);
 
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // use the debounce hook for 5 seconds (5000ms)
+  const debouncedSearchQuery = useDebounce(searchQuery, 5000);
+
+  // Effect for live search using the debounced Query
+  useEffect(() => {
+    if(debouncedSearchQuery.trim() !== ""){
+      dispatch(searchStudents(debouncedSearchQuery));
+    }else {
+      dispatch(clearSearchResults())
+    }
+  },[debouncedSearchQuery,dispatch])
+
   const initialFormData = {
     name: "",
     description: "",
@@ -43,7 +59,6 @@ const Home: React.FC = () => {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState(initialFormData);
-  const [searchQuery, setSearchQuery] = useState("");
 
 
   useEffect(() => {

@@ -1,0 +1,14 @@
+// src/hooks/useDebounce.ts
+import { useState, useEffect } from "react";
+
+export function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+
+    return () => clearTimeout(timer); // cleanup on change
+  }, [value, delay]);
+
+  return debouncedValue;
+}
