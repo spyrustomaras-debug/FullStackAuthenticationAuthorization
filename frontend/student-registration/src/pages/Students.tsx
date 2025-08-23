@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, lazy, Suspense } from "react";
+import React, { useEffect, useMemo, lazy, Suspense, useState } from "react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import type { AppDispatch } from "../store";
 import {
@@ -36,6 +36,23 @@ const Students: React.FC = () => {
     return [...students].sort((a, b) => a.user.localeCompare(b.user));
   }, [students]);
 
+  // Pagination Logic
+  const [currentPage, setCurrentPage] = useState(1);
+  const studentsPerPage = 3;
+
+  // Pagination Logic
+  const indexOfLastStudent = currentPage * studentsPerPage;
+  const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
+  const currentStudents = sortedStudents.slice(indexOfFirstStudent, indexOfLastStudent);
+
+  const totalPages = Math.ceil(sortedStudents.length / studentsPerPage);
+
+  const handlePageChange = (page:number) => {
+    if(page >= 1 && page <= totalPages){
+      setCurrentPage(page);
+    }
+  }
+
   return (
     <div style={{ paddingTop: "4rem" }}>
       <h1>Students</h1>
@@ -60,11 +77,41 @@ const Students: React.FC = () => {
         </thead>
         <tbody>
           <Suspense fallback={<tr><td colSpan={7}>Loading students...</td></tr>}>
-            {sortedStudents.map((s) => (
+            {currentStudents.map((s) => (
               <StudentRow key={s.id} student={s} />
             ))}
           </Suspense>
         </tbody>
+        {totalPages > 1 && (
+          <div style={{marginTop:"1rem", display:"flex", gap:"0.5rem"}}>
+            <button
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(currentPage - 1)}
+            >
+              Prev
+            </button>
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i}
+                onClick={() => handlePageChange(i + 1)}
+                style={{
+                  fontWeight: currentPage === i + 1 ? "bold" : "normal",
+                }}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
+            Next
+          </button>
+          </div>
+        )
+
+        }
       </table>
     </div>
   );
