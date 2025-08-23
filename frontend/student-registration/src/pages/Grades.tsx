@@ -16,6 +16,12 @@ const GradesPage: React.FC = () => {
   const { grades, loading, error } = useSelector(selectGrades, shallowEqual);
   const userRole = useSelector((state: RootState) => state.auth.role);
 
+  // Filters 
+  const [filterText, setFilterText] = useState("");
+  const [filterCourse, setFilterCourse] = useState("");
+  const [gradeFilter, setGradeFilter] = useState<"all" | "high" | "medium" | "low">("all")
+
+
   const initialFormState: Partial<Grade> = {
     student: undefined,
     course: undefined,
@@ -68,6 +74,24 @@ const GradesPage: React.FC = () => {
     [formData, dispatch, handleCloseModal]
   );
 
+   // Apply filters
+  const filteredGrades = grades.filter((g) => {
+    const matchesText =
+      g.student?.toString().includes(filterText) ||
+      (g.assessment_type?.toLowerCase().includes(filterText.toLowerCase()) ?? false);
+
+    const matchesCourse = filterCourse ? g.course?.toString() === filterCourse : true;
+
+    let matchesGrade = true;
+    if (gradeFilter === "high") matchesGrade = g.score > 80;
+    else if (gradeFilter === "medium") matchesGrade = g.score >= 50 && g.score <= 80;
+    else if (gradeFilter === "low") matchesGrade = g.score < 50;
+
+    return matchesText && matchesCourse && matchesGrade;
+  });
+
+
+
   if (loading) return <p>Loading grades...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -92,7 +116,40 @@ const GradesPage: React.FC = () => {
         </button>
       )}
 
-      <MemoizedGradesTable grades={grades} />
+      {/* Filters */}
+      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem", alignItems: "center" }}>
+        <input
+          type="text"
+          placeholder="Search student or assessment"
+          value={filterText}
+          onChange={(e) => setFilterText(e.target.value)}
+          style={{ padding: "0.5rem", borderRadius: "4px", border: "1px solid #ccc" }}
+        />
+
+        <select
+          value={filterCourse}
+          onChange={(e) => setFilterCourse(e.target.value)}
+          style={{ padding: "0.5rem", borderRadius: "4px", border: "1px solid #ccc" }}
+        >
+          <option value="">All Courses</option>
+          {[...new Set(grades.map(g => g.course))].map((course) => (
+            <option key={course} value={course}>{course}</option>
+          ))}
+        </select>
+
+        <select
+          value={gradeFilter}
+          onChange={(e) => setGradeFilter(e.target.value as any)}
+          style={{ padding: "0.5rem", borderRadius: "4px", border: "1px solid #ccc" }}
+        >
+          <option value="all">All Grades</option>
+          <option value="high">Above 80</option>
+          <option value="medium">50 - 80</option>
+          <option value="low">Below 50</option>
+        </select>
+      </div>
+
+      <MemoizedGradesTable grades={filteredGrades} />
 
       {/* Lazy-loaded modal */}
       {isModalOpen && (
