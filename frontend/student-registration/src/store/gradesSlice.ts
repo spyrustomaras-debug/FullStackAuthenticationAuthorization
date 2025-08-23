@@ -21,6 +21,7 @@ export const fetchGrades = createAsyncThunk(
     const response = await axios.get("http://localhost:8000/api/grades/", {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log("response.data grades", response.data)
     return response.data;
   }
 );
