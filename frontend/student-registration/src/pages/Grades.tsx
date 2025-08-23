@@ -162,6 +162,7 @@ const GradesPage: React.FC = () => {
                 handleChange={handleChange}
                 handleSubmit={handleSubmit}
                 handleCloseModal={handleCloseModal}
+                grades={grades}
               />
             </div>
           </div>
