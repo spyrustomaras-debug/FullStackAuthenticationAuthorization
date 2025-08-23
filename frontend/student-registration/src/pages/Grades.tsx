@@ -8,7 +8,7 @@ import "../style/GradeModal.css";
 const GradeForm = lazy(() => import("./GradeForm"));
 
 // Memoize GradesTable to prevent unnecessary re-renders
-import GradesTable from "./GradesTable";
+const GradesTable = lazy(() => import(/* webpackChunkName: "grades-table" */ "./GradesTable"));
 const MemoizedGradesTable = React.memo(GradesTable);
 
 const GradesPage: React.FC = () => {
