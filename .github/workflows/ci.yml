@@ -32,7 +32,8 @@ jobs:
         run: npm run tsc -- --noEmit
 
       - name: Run tests
-      - run: npm run test:ci
+        run: npm run test:ci
 
       - name: Build React app
         run: npm run build
+
