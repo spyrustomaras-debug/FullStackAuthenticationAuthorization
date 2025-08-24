@@ -32,7 +32,7 @@ jobs:
 
       # Run tests
       - name: Run tests
-        run: npm test -- --watchAll=false
+        run: npm test
 
       # Build React app
       - name: Build
