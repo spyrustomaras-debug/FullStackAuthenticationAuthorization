@@ -67,6 +67,7 @@ const GradeForm: React.FC<GradeFormProps> = ({ formData, handleChange, handleSub
         <input
           id="student"
           type="number"
+          aria-label="Student"
           name="student"
           value={formData.student || ""}
           onChange={handleChange}
@@ -81,6 +82,7 @@ const GradeForm: React.FC<GradeFormProps> = ({ formData, handleChange, handleSub
           id="course"
           type="number"
           name="course"
+          aria-label="Course"
           value={formData.course || ""}
           onChange={handleChange}
           style={{ width: "100%", padding: "0.5rem" }}

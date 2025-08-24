@@ -45,13 +45,13 @@ beforeEach(() => {
   // Adjusted mock data to include 'subject' for TableRow
   mockedAxios.get.mockResolvedValue({
     data: [
-      { id: 1, student: 1, course: 1, subject: "Math", score: 90 },
-      { id: 2, student: 2, course: 1, subject: "Science", score: 85 },
+      { id: 1, student: 1, course: 1, assessment_type: "Math", score: 90 },
+      { id: 2, student: 2, course: 1, assessment_type: "Science", score: 85 },
     ],
   });
 
   mockedAxios.post.mockResolvedValue({
-    data: { id: 3, student: 1, course: 1, subject: "Assignment", score: 95 },
+    data: { id: 3, student: 1, course: 1, assessment_type: "Assignment", score: 95 },
   });
 });
 
@@ -69,7 +69,10 @@ test("opens and closes create grade modal", async () => {
   await waitFor(() => screen.getByText("90")); // wait for grades to load
 
   fireEvent.click(screen.getByRole("button", { name: /create grade/i }));
-  expect(screen.getByRole("heading", { name: /create grade/i })).toBeInTheDocument();
+
+  // Wait for modal heading to appear
+  const modalHeading = await screen.findByRole("heading", { name: /create grade/i });
+  expect(modalHeading).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole("button", { name: /cancel/i }));
   expect(screen.queryByRole("heading", { name: /create grade/i })).not.toBeInTheDocument();
@@ -79,12 +82,21 @@ test("creates a new grade through modal", async () => {
   renderWithStore(<GradesPage />);
   await waitFor(() => screen.getByText("90")); // wait for initial grades
 
+  // open modal first
   fireEvent.click(screen.getByRole("button", { name: /create grade/i }));
 
-  fireEvent.change(screen.getByLabelText(/Student/i), { target: { value: "1" } });
-  fireEvent.change(screen.getByLabelText(/Course/i), { target: { value: "1" } });
-  fireEvent.change(screen.getByLabelText(/Assessment Type/i), { target: { value: "Assignment" } });
-  fireEvent.change(screen.getByLabelText(/Score/i), { target: { value: "95" } });
+  // wait for input to appear
+  const studentInput = await screen.findByLabelText(/Student ID/i);
+  const courseInput = await screen.findByLabelText(/Course ID/i);
+  const assessmentInput = await screen.findByLabelText(/Assessment Type/i);
+  const scoreInput = await screen.findByLabelText(/Score/i);
+
+  // now fire events
+  fireEvent.change(studentInput, { target: { value: "1" } });
+  fireEvent.change(courseInput, { target: { value: "1" } });
+  fireEvent.change(assessmentInput, { target: { value: "Assignment" } });
+  fireEvent.change(scoreInput, { target: { value: "95" } });
+
 
   fireEvent.click(screen.getByRole("button", { name: /^submit$/i }));
 
