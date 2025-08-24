@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { AppDispatch } from "../store/index";
 
@@ -22,6 +22,21 @@ import {
   clearSearchResults,
 } from "../store/searchSlice";
 
+
+
+// 📊 Import Recharts
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
+import { fetchGrades, selectGrades, type Grade } from "../store/gradesSlice";
+
 let debounceTimer: any;
 
 
@@ -37,6 +52,8 @@ const Home: React.FC = () => {
   const searchError = useSelector(selectSearchError);
 
   const [searchQuery, setSearchQuery] = useState("");
+
+  const grades = useSelector(selectGrades) as any;
 
   // use the debounce hook for 5 seconds (5000ms)
   const debouncedSearchQuery = useDebounce(searchQuery, 5000);
@@ -64,6 +81,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     dispatch(fetchCourses());
     dispatch(fetchStudents());
+    dispatch(fetchGrades()); // << IMPORTANT: load grades
   }, [dispatch]);
 
   // Live search on every input change with debounce
@@ -106,6 +124,34 @@ const Home: React.FC = () => {
     dispatch(fetchCourses()); // Refresh course list
   };
 
+  // Build a quick lookup for course id -> name
+  const courseNameById = useMemo(() => {
+    const map = new Map<number, string>();
+    for (const c of courses) map.set(c.id, c.name);
+      return map;
+  }, [courses]);
+
+  // 📊 Aggregate total score per subject
+  // We support two shapes: Grade.subject (string) OR Grade.course (id -> Course.name)
+  const chartData = useMemo(() => {
+  if (!Array.isArray(grades)) return [];
+
+  const totals = new Map<string, number>();
+
+  for (const g of grades) {
+    const subjectName = g.subject?.trim() || (g.course != null ? courseNameById.get(g.course) : undefined);
+    if (!subjectName) continue;
+
+    totals.set(subjectName, (totals.get(subjectName) || 0) + (g.score || 0));
+  }
+
+  return Array.from(totals.entries()).map(([subject, totalScore]) => ({
+    subject,
+    totalScore,
+  }));
+}, [grades, courseNameById]);
+
+
 
   return (
     <div style={{ paddingTop: "4rem" }}>
@@ -147,6 +193,25 @@ const Home: React.FC = () => {
           </li>
         ))}
       </ul>
+
+      {/* 📊 Chart Section */}
+      <h2>Total Score per Subject</h2>
+      {chartData.length === 0 ? (
+      <p>No grade data to display.</p>
+      ) : (
+      <div style={{ width: "100%", height: 420 }}>
+      <ResponsiveContainer>
+      <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="subject" />
+      <YAxis />
+      <Tooltip />
+      <Legend />
+      <Bar dataKey="totalScore" name="Total Score" />
+      </BarChart>
+      </ResponsiveContainer>
+      </div>
+      )}
 
       {/* Modal */}
       {modalOpen && (
