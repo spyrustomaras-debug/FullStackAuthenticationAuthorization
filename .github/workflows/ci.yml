@@ -2,38 +2,37 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]   # run on pushes to main
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]   # also run on PRs
+    branches: [ "main" ]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: frontend/student-registration   # 👈 all run steps now start here
+
     steps:
-      # Checkout the repo
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Setup Node.js (adjust version if needed)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: "npm"
+          cache-dependency-path: frontend/student-registration/package-lock.json # 👈 point cache to lockfile
 
-      # Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # Run type-checking
       - name: Run TypeScript check
         run: npm run tsc -- --noEmit
 
-      # Run tests
       - name: Run tests
         run: npm test -- --watchAll=false
 
-      # Build React app
-      - name: Build
+      - name: Build React app
         run: npm run build
