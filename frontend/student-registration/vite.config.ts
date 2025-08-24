@@ -14,5 +14,11 @@ export default defineConfig({
   test: {
     setupFiles: 'src/setupTests.ts',
     environment: 'jsdom',
+    globals: true,
+    coverage: {
+      reporter: ['text', 'lcov'],
+      all: true,            // include all files
+      exclude: ['node_modules/', 'tests/']
+    }
   },
 });

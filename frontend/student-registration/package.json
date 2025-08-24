@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:ci": "vitest run",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
