@@ -60,6 +60,15 @@ describe("Students Component", () => {
 
     renderWithStore({ students: { students: studentsData, loading: false, error: null } });
 
+    // Check the table header row exists
+    const headerRow = screen.getByRole("row", {
+        name: /ID Name DOB Enrollment Address Phone Grade/i,
+    });
+    expect(headerRow).toBeInTheDocument();
+
+    // Print the DOM before assertions
+    screen.debug(); // <--- this will log the HTML structure
+
     expect(screen.getByText(/Average Grade: 3.50/)).toBeInTheDocument();
 
     await waitFor(() => {
