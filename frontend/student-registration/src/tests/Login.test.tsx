@@ -13,6 +13,28 @@ import ThemeToggle from "../components/ThemeToggle";
 vi.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, string>) => {
+      const translations: Record<string, string> = {
+        "login.username": "Username",
+        "login.password": "Password",
+        "login.submit": "Login",
+        "login.loggingIn": "Logging in...",
+        "login.title": "Login",
+        "login.failedTitle": "Login Failed",
+        "login.failedMessage": "Login failed. Please try again.",
+        "login.welcome": `Welcome, ${options?.role || ""}`,
+        "login.studentMessage": "You are a student user!",
+        "login.teacherMessage": "You are a teacher user!",
+      };
+      return translations[key] || key;
+    },
+  }),
+}));
+
+
+
 // Helper to render Login with store
 function renderWithStore(ui: React.ReactElement, preloadedAuthState?: Partial<AuthState>) {
   const store = configureStore({
