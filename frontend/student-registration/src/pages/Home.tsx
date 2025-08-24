@@ -35,7 +35,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import { fetchGrades, selectGrades, type Grade } from "../store/gradesSlice";
+import { fetchGrades, selectGrades } from "../store/gradesSlice";
 
 let debounceTimer: any;
 

@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar"; // Navbar should stay eager (always used)
 import Loader from "./components/Loader"; // 🔥 import new loader
 import ProtectedRoute from "./components/ProtectedRoute";
-import { ThemeProvider } from "./context/ThemeContext";
 
 // Lazy-loaded pages
 const Home = lazy(() => import("./pages/Home"));

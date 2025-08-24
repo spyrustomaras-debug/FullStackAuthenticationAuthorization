@@ -106,7 +106,7 @@ export const gradesSlice = createSlice({
 export const selectGrades = (state: RootState) => state.grades;
 
 export default gradesSlice.reducer;
-function rejectWithValue(arg0: any): any {
+function rejectWithValue(_arg0: any): any {
   throw new Error("Function not implemented.");
 }
 
