@@ -4,10 +4,10 @@ import { loginUser } from "../store/authSlice";
 import type { AppDispatch, RootState } from "../store/index";
 import { useTranslation } from "react-i18next";
 
-// Lazy-load Modal to reduce initial JS execution
+import "../styles/login.css"; // Import CSS
+
 const Modal = React.lazy(() => import("../components/Modal"));
 
-// ---------------- Input Component ----------------
 interface InputProps {
   type?: string;
   placeholder: string;
@@ -15,7 +15,6 @@ interface InputProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-// Memoized input to prevent unnecessary re-renders
 const Input: React.FC<InputProps> = React.memo(
   ({ type = "text", placeholder, value, onChange }) => (
     <input
@@ -30,10 +29,8 @@ const Input: React.FC<InputProps> = React.memo(
 
 const Login = () => {
   const { t } = useTranslation();
-
   const dispatch = useDispatch<AppDispatch>();
 
-  // Select specific auth fields to reduce re-renders
   const { loading, error, role, user_id } = useSelector(
     (state: RootState) => ({
       loading: state.auth.loading,
@@ -49,7 +46,6 @@ const Login = () => {
   const [message, setMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
 
-  // Memoized handlers for input fields
   const onUsernameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value),
     []
@@ -76,44 +72,45 @@ const Login = () => {
   );
 
   return (
-    <div>
-      <h2>{t("login.title")}</h2>
-      <form onSubmit={handleLogin}>
-        <Input
-          placeholder={t("login.username")}
-          value={username}
-          onChange={onUsernameChange}
-        />
-        <Input
-          type="password"
-          placeholder={t("login.password")}
-          value={password}
-          onChange={onPasswordChange}
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? t("login.loggingIn") : t("login.submit")}
-        </button>
-      </form>
+    <div className="login-page">
+      <div className="login-card">
+        <h2 className="login-title">{t("login.title")}</h2>
 
-      {/* Modal for login error */}
-      <Suspense fallback={null}>
-        {showModal && (
-          <Modal
-            title={t("login.failedTitle")}
-            message={message}
-            onClose={() => setShowModal(false)}
+        <form onSubmit={handleLogin} className="login-form">
+          <Input
+            placeholder={t("login.username")}
+            value={username}
+            onChange={onUsernameChange}
           />
-        )}
-      </Suspense>
+          <Input
+            type="password"
+            placeholder={t("login.password")}
+            value={password}
+            onChange={onPasswordChange}
+          />
+          <button type="submit" disabled={loading} className="login-button">
+            {loading ? t("login.loggingIn") : t("login.submit")}
+          </button>
+        </form>
 
-      {/* Welcome message after login */}
-      {role && (
-        <div>
-          <h3>{t("login.welcome", { role, id: user_id })}</h3>
-          {role === "student" && <p>{t("login.studentMessage")}</p>}
-          {role === "teacher" && <p>{t("login.teacherMessage")}</p>}
-        </div>
-      )}
+        <Suspense fallback={null}>
+          {showModal && (
+            <Modal
+              title={t("login.failedTitle")}
+              message={message}
+              onClose={() => setShowModal(false)}
+            />
+          )}
+        </Suspense>
+
+        {role && (
+          <div className="login-welcome">
+            <h3>{t("login.welcome", { role, id: user_id })}</h3>
+            {role === "student" && <p>{t("login.studentMessage")}</p>}
+            {role === "teacher" && <p>{t("login.teacherMessage")}</p>}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
