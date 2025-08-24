@@ -15,8 +15,17 @@ const studentsPersistConfig = {
   whitelist: ["students"], // only persist the students array
 };
 
+const gradesPersistConfig = {
+  key: "grades",
+  storage,
+  whitelist: ["grades"], // only persist the grades array from the state
+};
+
+
 // Wrap the reducer
 const persistedStudentsReducer = persistReducer(studentsPersistConfig, studentsReducer);
+const persistedGradesReducer = persistReducer(gradesPersistConfig, gradesReducer);
+
 
 
 export const store = configureStore({
@@ -25,7 +34,7 @@ export const store = configureStore({
     auth: authReducer,
     courses: coursesReducer,
     students: persistedStudentsReducer,
-    grades: gradesReducer,
+    grades: persistedGradesReducer, // ✅ use persisted version
     search: searchReducer,
   },
 });
